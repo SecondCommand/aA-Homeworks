@@ -78,7 +78,7 @@ class Playwright
         data.map { |datum| Playwright.new(datum) }
     end
 
-    self.find_by_name(name)
+    def self.find_by_name(name)
         person = PlayDBConnection.instance.execute(<<-SQL)
             SELECT * FROM playwrights WHERE name = ?
         SQL
@@ -86,7 +86,7 @@ class Playwright
         Playwright.new(person.first)
     end
 
-    def initialize
+    def initialize(options)
         @id = options['id']
         @name = options['name']
         @birth_year = options['birth_year']
@@ -94,7 +94,7 @@ class Playwright
 
     def create
         raise if @id # if already there don't create
-        PlayDBConnection.instance.execute(<<-SQL, @name, @birthyear)
+        PlayDBConnection.instance.execute(<<-SQL, @name, @birth_year)
             INSERT INTO playwrights (name, birth_year)
             VALUES (?, ?)
         SQL
@@ -103,7 +103,7 @@ class Playwright
 
     def update
         raise unless @id # make sure id there already
-        PlayDBConnection.instance.execute(<<-SQL @name, @birthyear, @id)
+        PlayDBConnection.instance.execute(<<-SQL, @name, @birth_year, @id)
             UPDATE playwrights SET name = ?, birth_year = ?
             WHERE id = ?
         SQL
@@ -112,7 +112,7 @@ class Playwright
     def get_plays
         raise unless @id # it should exist to get it
         plays = PlayDBConnection.instance.execute(<<-SQL, @id)
-            SELECT * FROM playwrights WHERE playwright_id = ?
+            SELECT * FROM plays WHERE playwright_id = ?
         SQL
         plays.map{|play| Play.new(play)}
     end
