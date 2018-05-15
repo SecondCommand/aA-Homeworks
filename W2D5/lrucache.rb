@@ -1,13 +1,16 @@
 class LRUCache
 
+
+  end
+
     def initialize(number)
         @storage = []
-        number.times do 
+        number.times do
             storage << Array.new(1)
         end
     end
 
-    
+
     def count
         storage.count{|el| el != nil}
       # returns number of elements currently in cache
@@ -20,7 +23,7 @@ class LRUCache
         end
       # adds element to cache according to LRU principle
       # this means that it gets rid of the element that was least recently used
-      
+
     end
 
     def show
